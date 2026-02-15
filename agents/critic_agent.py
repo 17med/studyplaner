@@ -57,11 +57,13 @@ Return ONLY a JSON object (inside a ```json``` code fence):
 
 RULES
 • Be constructive – always explain *why* and give a concrete fix.
-• Set `approved` to `true` ONLY if the plan is ready for the student
-  with no significant issues remaining.
+• Set `approved` to `true` if the plan is reasonably good and feasible.
+  It does NOT need to be perfect.
 • If time report flags the plan as infeasible, do NOT approve.
-• You MUST approve if quality_score >= 7 and there are no high-severity
-  issues.  Do not be needlessly harsh.
+• You MUST set `approved` to `true` if quality_score >= 6.
+  Do not be needlessly harsh — a good-enough plan is better than endless revision.
+• Lean towards approval. Minor issues can be noted in `weaknesses`
+  without blocking approval.
 • Output ONLY the JSON block – no prose before or after.
 """
 

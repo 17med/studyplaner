@@ -28,21 +28,47 @@ export default function App() {
     }, 4000)
 
     try {
-      const resp = await fetch('/api/generate', {
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 300000) // 5 min
+
+      const resp = await fetch('http://localhost:5000/api/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
+        signal: controller.signal,
       })
+
+      clearTimeout(timeoutId)
+
+      if (!resp.ok) {
+        const text = await resp.text()
+        let msg = `Server error (${resp.status})`
+        try { msg = JSON.parse(text).error || msg } catch {}
+        throw new Error(msg)
+      }
 
       const data = await resp.json()
 
-      if (!resp.ok || !data.success) {
+      if (!data.success) {
         throw new Error(data.error || 'Failed to generate plan')
+      }
+
+      if (!data.plan || (!data.plan.topic && !data.plan.weekly_plan)) {
+        throw new Error('AI returned a response but no structured plan could be extracted. Try again.')
+      }
+
+      // Ensure topic field exists (use fallback from request)
+      if (!data.plan.topic) {
+        data.plan.topic = formData.topic || 'Study Plan'
       }
 
       setResult(data)
     } catch (err) {
-      setError(err.message)
+      if (err.name === 'AbortError') {
+        setError('Request timed out after 5 minutes. The AI may be overloaded — try again.')
+      } else {
+        setError(err.message)
+      }
     } finally {
       clearInterval(interval)
       setLoading(false)

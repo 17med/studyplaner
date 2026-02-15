@@ -18,7 +18,7 @@ NVIDIA_MODEL: str = os.getenv("NVIDIA_MODEL", "openai/gpt-oss-120b")
 
 # ── Generation parameters ──────────────────────────────────────────────
 TEMPERATURE: float = float(os.getenv("TEMPERATURE", "0.7"))
-MAX_TOKENS: int = int(os.getenv("MAX_TOKENS", "2048"))
+MAX_TOKENS: int = int(os.getenv("MAX_TOKENS", "8192"))
 
 # ── Orchestrator settings ──────────────────────────────────────────────
-MAX_REVISION_ROUNDS: int = int(os.getenv("MAX_REVISION_ROUNDS", "3"))
+MAX_REVISION_ROUNDS: int = int(os.getenv("MAX_REVISION_ROUNDS", "1"))

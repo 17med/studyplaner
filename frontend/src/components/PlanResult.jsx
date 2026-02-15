@@ -3,13 +3,7 @@ import WeekCard from './WeekCard'
 
 export default function PlanResult({ plan, review, timeReport, approved, rounds }) {
   if (!plan || !plan.topic) {
-    return (
-      <div className="card">
-        <p style={{ color: 'var(--text-muted)' }}>
-          No structured plan could be parsed from the AI response. Try again.
-        </p>
-      </div>
-    )
+    return null
   }
 
   const qualityScore = review?.quality_score ?? '?'

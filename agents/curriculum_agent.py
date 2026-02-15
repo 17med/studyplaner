@@ -108,5 +108,18 @@ class CurriculumAgent(BaseAgent):
         user_prompt = "\n".join(parts)
         raw = self._call_llm(user_prompt)
 
-        plan_data = self._extract_json(raw) or {}
-        return self._make_message(raw, data={"plan": plan_data})
+        plan_data = self._extract_json(raw)
+
+        # Retry once with an explicit nudge if extraction failed
+        if not plan_data:
+            logger.warning("[%s] JSON extraction failed on first attempt – retrying …", self.name)
+            retry_prompt = (
+                user_prompt
+                + "\n\n⚠️ IMPORTANT: Your previous response could not be parsed. "
+                "Return ONLY a valid JSON object inside a ```json``` code fence. "
+                "No text before or after the JSON block."
+            )
+            raw = self._call_llm(retry_prompt)
+            plan_data = self._extract_json(raw)
+
+        return self._make_message(raw, data={"plan": plan_data or {}})
